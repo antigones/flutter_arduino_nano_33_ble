@@ -4,19 +4,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:provider/provider.dart';
 class BLEProvider with ChangeNotifier  {
-  final FlutterReactiveBle _ble = FlutterReactiveBle();
+  FlutterReactiveBle _ble;
   StreamSubscription _subscription;
   StreamSubscription<ConnectionStateUpdate> _connection;
   String _message;
 
-  BLEProvider() {
+  BLEProvider(FlutterReactiveBle ble) {
+    _ble = ble;
     _connectBLE();
   }
 
   void _connectBLE()  {
-    /*setState(() {
-      temperatureStr = 'Loading';
-    });*/
+
     _message = "Loading";
     notifyListeners();
     _subscription?.cancel();

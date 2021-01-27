@@ -8,10 +8,11 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterReactiveBle ble = FlutterReactiveBle();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => BLEProvider()),
+        ChangeNotifierProvider(create: (context) => BLEProvider(ble)),
       ],
       child: MyApp(),
     ),
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
 
-  final BLEProvider _bleProvider = BLEProvider();
+
   int temperature;
   String temperatureStr = "Hello";
 
