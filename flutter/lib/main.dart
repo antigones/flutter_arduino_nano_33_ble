@@ -36,14 +36,24 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
 
-
   int temperature;
   String temperatureStr = "Hello";
+
+  Future<bool> _onWillPop() async {
+    print('will pop');
+    return true;
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+    return WillPopScope(
+        onWillPop: () async {
+          Provider.of<BLEProvider>(context, listen: false).disconnect();
+      return true;
+    },
+    child:Scaffold(
         body: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -68,6 +78,6 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Color(0xFF74A4BC),
         child: Icon(Icons.loop),
       ), */ // This trailing comma makes auto-formatting nicer for build methods.
-        );
+        ));
   }
 }

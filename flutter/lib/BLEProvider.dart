@@ -20,16 +20,19 @@ class BLEProvider with ChangeNotifier  {
     notifyListeners();
     _subscription?.cancel();
     _subscription = _ble.scanForDevices(
-        withServices: [],
-        scanMode: ScanMode.lowLatency,
-        requireLocationServicesEnabled: true).listen((device) async {
+        withServices: [Uuid.parse("181A")]).listen((device) async {
       if (device.name == 'Nano33BLESENSE') {
         print('Nano33BLESENSE found!');
         if (_connection != null) {
-          await _connection.cancel();
+          try {
+            await _connection.cancel();
+          } on Exception catch (e, _) {
+            print("Error disconnecting from a device: $e");
+            _message = e.toString();
+            notifyListeners();
+          }
         }
-
-        _connection = _ble
+          _connection = _ble
             .connectToDevice(
           id: device.id,
         )
@@ -48,40 +51,38 @@ class BLEProvider with ChangeNotifier  {
               print(data);
               _message = data[0].toString()+ '°';
               notifyListeners();
-              /*setState(() {
-                temperature = data[0];
-                temperatureStr = temperature.toString() + '°';
-              });*/
+
             }, onError: (dynamic error) {
               // code to handle errors
               print('error subscribing characteristic!');
               print(error.toString());
-             /* setState(() {
-                temperatureStr = error.toString();
-              });*/
+              _message = error.toString();
+              notifyListeners();
+
             });
+
            // print('disconnected');
           }
         }, onError: (dynamic error) {
           // Handle a possible error
           print('error connecting!');
           print(error.toString());
-         /* setState(() {
-            temperatureStr = error.toString();
-          });*/
+          _message = error.toString();
+          notifyListeners();
+
         });
       }
     }, onError: (error) {
       print('error scanning!');
       print(error.toString());
-      /*setState(() {
-        temperatureStr = error.toString();
-      });*/
+      _message = error.toString();
+      notifyListeners();
+
     });
 
   }
 
-  void _disconnect() async {
+  void disconnect() async {
     _subscription?.cancel();
     if (_connection != null) {
       await _connection.cancel();
